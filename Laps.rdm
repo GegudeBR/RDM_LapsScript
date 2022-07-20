@@ -28,13 +28,13 @@ $Action = {
 
 $Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action
 
-for($i=0; $i -le 10; $i++)
+for($i=0; $i -le 30; $i++)
 {
   if ($Result.Password -ne "")
   {
     break
   }
-  Start-Sleep -Seconds 1
+  Start-Sleep -Milliseconds 300
 }
 
 Write-Host "Password: $Result.Password"

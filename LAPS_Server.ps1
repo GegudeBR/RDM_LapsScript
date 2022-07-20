@@ -1,3 +1,6 @@
+param (
+    [switch]$Unregister
+);
 Import-Module AdmPwd.PS
 
 $FileWatcher = New-Object System.IO.FileSystemWatcher
@@ -21,13 +24,13 @@ $Action = {
     $Fetching = $false
     }  
 
-$Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action
-
-try {
-  while(1){
+if($Unregister) {
+  try {
+    Get-EventSubscriber -SourceIdentifier LapsPS | Unregister-Event
+  } catch {
+    Write-Host Event not registered.
   }
-} finally {
-  Unregister-Event $Changed
+} else { 
+  $Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action -SourceIdentifier LapsPS
 }
-
 
