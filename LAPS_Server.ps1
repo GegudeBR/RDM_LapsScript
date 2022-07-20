@@ -15,14 +15,19 @@ $Action = {
 	$Path = $Event.SourceEventArgs.FullPath 
     Start-Sleep 0.3
 	$ComputerName = Get-Content $Path
-    Write-Host Password requested for $ComputerName
+    Write-Host "$(Get-Date): Request for $ComputerName"
 	$Password = Get-AdmPwdPassword -ComputerName $ComputerName | select -ExpandProperty Password
 	Set-Content -Path L:\LAPS\out.laps -Value $Password
     $Fetching = $false
     }  
 
-Register-ObjectEvent $FileWatcher "Changed" -Action $Action
+$Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action
 
-
-while(1){
+try {
+  while(1){
+  }
+} finally {
+  Unregister-Event $Changed
 }
+
+
