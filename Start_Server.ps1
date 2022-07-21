@@ -1,0 +1,1 @@
+powershell -noexit -file .\LAPS_Server.ps1
