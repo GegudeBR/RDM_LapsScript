@@ -4,30 +4,31 @@ if($ComputerName -eq $null) {
 	$ComputerName = Read-Host "Computer name"
 }
 
-$ComputerName | Out-File -FilePath C:\temp\LAPS\in.laps
 $Password = ""
+$ComputerName | Out-File -FilePath C:\temp\LAPS\in.laps
 
-if (!(Test-Path "C:\temp\LAPS\out.laps"))
-{
-   Set-Content -Path "C:\temp\LAPS\out.laps"
+if (!(Test-Path "C:\temp\LAPS\out.laps")) {
+    Set-Content -Path "C:\temp\LAPS\out.laps"
 }
 
-$FileWatcher = New-Object System.IO.FileSystemWatcher
-$FileWatcher.Path = "C:\temp\LAPS"
-$FileWatcher.Filter = "out.laps"
-$FileWatcher.EnableRaisingEvents = $true
-
+$Folder = "C:\temp\LAPS\"
+$Filter = "out.laps"
+$FileWatcher = New-Object System.IO.FileSystemWatcher $Folder, $Filter -Property @{
+    EnableRaisingEvents = $true
+}
 
 $Action = {
-	$Path = $Event.SourceEventArgs.FullPath
+    $Path = $Event.SourceEventArgs.FullPath
     $Password = Get-Content $Path
-	Write-Host $Password
-    }  
+    Write-Host $Password
+}  
 
-$Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action
+$Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action -SourceIdentifier LapsPS
 
-while(1) {
+for ($i = 0; $i -le 20; $i++) {
     if ($Password -ne "") {
         break
     }
+    Start-Sleep -Milliseconds 300
 }
+Unregister-Event -SourceIdentifier LapsPS
