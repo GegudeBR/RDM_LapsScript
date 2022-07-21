@@ -28,7 +28,7 @@ $Action = {
 
 $Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action
 
-for($i=0; $i -le 30; $i++)
+for($i=0; $i -le 20; $i++)
 {
   if ($Result.Password -ne "")
   {
@@ -37,11 +37,9 @@ for($i=0; $i -le 30; $i++)
   Start-Sleep -Milliseconds 300
 }
 
-Write-Host "Password: $Result.Password"
-
 if($Result.Password -eq "") {
   $Result.Cancel=$True
-  $Result.ErrorMessage="LAPS Server is not replying!"
+  $Result.ErrorMessage="LAPS server timed out!"
 }
 
 
