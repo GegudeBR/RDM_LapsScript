@@ -22,19 +22,24 @@ $FileWatcher.Filter = "out.laps"
 $FileWatcher.EnableRaisingEvents = $true
 
 $Action = {
+  $FileWatcher.EnableRaisingEvents = $false
 	$Path = $Event.SourceEventArgs.FullPath
+  Start-Sleep -Milliseconds 100
 	$Result.Password = Get-Content $Path
+  $FileWatcher.EnableRaisingEvents = $true
   }  
 
 $Changed = Register-ObjectEvent $FileWatcher "Changed" -Action $Action
 
-for($i=0; $i -le 20; $i++)
+
+# 30 * 100ms = 30000ms = 30 seconds timeout
+for($i=0; $i -le 30; $i++)
 {
   if ($Result.Password -ne "")
   {
     break
   }
-  Start-Sleep -Milliseconds 300
+  Start-Sleep -Milliseconds 100
 }
 
 if($Result.Password -eq "") {
